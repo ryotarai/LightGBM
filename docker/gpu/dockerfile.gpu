@@ -76,8 +76,8 @@ RUN echo 'export PATH=/opt/conda/bin:$PATH' > /etc/profile.d/conda.sh && \
     /bin/bash ~/miniconda.sh -b -p /opt/conda && \
     rm ~/miniconda.sh
 
-RUN conda create -q -n py2 python=2.7 mkl numpy scipy scikit-learn jupyter notebook ipython pandas matplotlib && \
-    conda create -q -n py3 python=3.5 mkl numpy scipy scikit-learn jupyter notebook ipython pandas matplotlib && \
+RUN conda create -y -q -n py2 python=2.7 mkl numpy scipy scikit-learn jupyter notebook ipython pandas matplotlib && \
+    conda create -y -q -n py3 python=3.5 mkl numpy scipy scikit-learn jupyter notebook ipython pandas matplotlib && \
     conda clean -i -l -t -y
 
 #################################################################################################################
