@@ -36,25 +36,27 @@ RUN chmod +x /tini
 
 RUN apt-get update && \
 apt-get install -y \
-build-essential \
-curl \
-wget \
-bzip2 \
-ca-certificates \
-libglib2.0-0 \
-libxext6 \
-libsm6 \
-libxrender1 \
-git \
-vim \
-mercurial \
-subversion \
-cmake \
-libboost-dev \
-libboost-system-dev \
-libboost-filesystem-dev \
-gcc \
-g++
+    build-essential \
+    curl \
+    wget \
+    bzip2 \
+    ca-certificates \
+    libglib2.0-0 \
+    libxext6 \
+    libsm6 \
+    libxrender1 \
+    git \
+    vim \
+    mercurial \
+    subversion \
+    cmake \
+    libboost-dev \
+    libboost-system-dev \
+    libboost-filesystem-dev \
+    gcc \
+    g++ && \
+apt-get autoremove -y && apt-get clean && \
+rm -rf /var/lib/apt/lists/*
 
 # Add OpenCL ICD files for LightGBM
 RUN mkdir -p /etc/OpenCL/vendors && \
@@ -74,8 +76,9 @@ RUN echo 'export PATH=/opt/conda/bin:$PATH' > /etc/profile.d/conda.sh && \
     /bin/bash ~/miniconda.sh -b -p /opt/conda && \
     rm ~/miniconda.sh
 
-RUN conda create -q -n py2 python=2.7 mkl numpy scipy scikit-learn jupyter notebook ipython pandas matplotlib
-RUN conda create -q -n py3 python=3.5 mkl numpy scipy scikit-learn jupyter notebook ipython pandas matplotlib
+RUN conda create -q -n py2 python=2.7 mkl numpy scipy scikit-learn jupyter notebook ipython pandas matplotlib && \
+    conda create -q -n py3 python=3.5 mkl numpy scipy scikit-learn jupyter notebook ipython pandas matplotlib && \
+    conda clean -i -l -t -y
 
 #################################################################################################################
 #           LightGBM
@@ -91,17 +94,6 @@ ENV PATH /usr/local/src/lightgbm/LightGBM:${PATH}
 
 RUN /bin/bash -c "source activate py2 && cd /usr/local/src/lightgbm/LightGBM/python-package && python setup.py install --precompile && source deactivate"
 RUN /bin/bash -c "source activate py3 && cd /usr/local/src/lightgbm/LightGBM/python-package && python setup.py install --precompile && source deactivate"
-    
-#################################################################################################################
-#           System CleanUp
-#################################################################################################################
-# apt-get autoremove: used to remove packages that were automatically installed to satisfy dependencies for some package and that are no more needed.
-# apt-get clean: removes the aptitude cache in /var/cache/apt/archives. You'd be amazed how much is in there! the only drawback is that the packages 
-# have to be downloaded again if you reinstall them.
-
-RUN apt-get autoremove -y && apt-get clean && \
-    rm -rf /var/lib/apt/lists/* && \
-    conda clean -i -l -t -y
 
 #################################################################################################################
 #           JUPYTER 
